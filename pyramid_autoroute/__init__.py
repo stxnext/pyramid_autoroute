@@ -1,16 +1,19 @@
+from __future__ import print_function
+
 import inspect
 import re
 import sys
 import time
 from pyramid.url import urlencode
 from random import choice
-from string import letters
+from string import ascii_letters
 from pyramid.path import caller_package
 
 from pyramid.exceptions import ConfigurationError
 
 first_cap_re = re.compile('(.)([A-Z][a-z]+)')
 all_cap_re = re.compile('([a-z0-9])([A-Z])')
+
 
 def convert(name):
     """
@@ -23,6 +26,7 @@ def convert(name):
 
 class UnresolvedRoute(Exception):
     pass
+
 
 class FakeConfig(object):
     def __init__(self, application_package):
@@ -59,20 +63,18 @@ class RouteResolver(object):
                     longest_len = maybe_longest_len
                 resolved.append(result)
 
-
-        print '\nAuto generated routes:\n'
-        print 'Name'.ljust(longest_len+6, ' '), 'Path'
-        print '----------------------------------------------------------------'
+        print('\nAuto generated routes:\n')
+        print('Name'.ljust(longest_len+6, ' '), 'Path')
+        print('----------------------------------------------------------------')
         for view_name, path in resolved:
-            print view_name.ljust(longest_len+6, ' '), path
+            print(view_name.ljust(longest_len+6, ' '), path)
 
-        print '\n'
+        print('\n')
         return resolved
-
 
     def get_callable_name(self, callable):
         if inspect.isfunction(callable):
-            return callable.__module__, callable.func_name.lower()
+            return callable.__module__, callable.__name__.lower()
         elif inspect.isclass(callable):
             name =  callable.__name__
             name = convert(name)
@@ -97,17 +99,19 @@ class RouteResolver(object):
             self.config.add_route(name, path)
             return name, path
 
+
 def prepare_url_for(resolved):
     paths = [path for view_name, path in resolved ]
     def url_for(request, name, **kwargs):
         if name in paths:
             if kwargs:
-                params = dict((k, v) for k, v in kwargs.iteritems() if v != None)
+                params = {k: v for k, v in kwargs.items() if v is not None}
                 return '%s?%s' % (name, urlencode(params))
             return name
         else:
             raise UnresolvedRoute('Can\'t resolved %s route' % name)
     return url_for
+
 
 def includeme(config):
     root_module_str = config.registry.settings['pyramid.autoroute.root_module']
@@ -128,5 +132,4 @@ def includeme(config):
 
     resolved = RouteResolver(config, root_module_str, fake_config.views).resolveAll()
     config.add_request_method(prepare_url_for(resolved), name='url_for')
-    print 'Routes generated in %ss' % round(diff, 2)
-
+    print('Routes generated in %ss' % round(diff, 2))
