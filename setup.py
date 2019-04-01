@@ -14,7 +14,7 @@ install_requires=[
     ]
 
 setup(name='pyramid_autoroute',
-      version='0.1.1',
+      version='1.2.0',
       description='Pyramid addon to auto detects views',
       long_description=README + '\n\n' +  CHANGES,
       classifiers=[
@@ -24,8 +24,10 @@ setup(name='pyramid_autoroute',
         "Topic :: Internet :: WWW/HTTP :: WSGI",
         "Programming Language :: Python",
         "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
         "Framework :: Pyramid",
         ],
       keywords='web wsgi pylons pyramid',
